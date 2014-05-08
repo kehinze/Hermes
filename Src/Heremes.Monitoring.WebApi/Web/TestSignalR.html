@@ -1,0 +1,34 @@
+﻿<h2>Monitor</h2>
+<div>
+    <p>
+        Completed: <span class="completedLine">Loading..</span>
+    </p>
+    <p>
+        Completed: <span class="completedBar">Loading..</span>
+    </p>
+    
+    <p>
+        Failed: <span class="failedLine">Loading..</span>
+    </p>
+    <p>
+        Failed: <span class="failedBar">Loading..</span>
+    </p>
+      <script src="/signalr/hubs"></script>
+    <script>
+        $(function () {
+            var chat = $.connection.messageMonitor;
+            chat.client.addMessageResultToPage = function (goodQueue, badQueue) {
+
+                $('.completedLine').sparkline(goodQueue, { lineColor: 'green' });
+                $('.completedBar').sparkline(goodQueue, { type: 'bar', barColor: 'green' });
+
+                $('.failedLine').sparkline(badQueue, { lineColor: 'red' });
+                $('.failedBar').sparkline(badQueue, { type: 'bar', barColor: 'red' });
+            };
+
+            $.connection.hub.start().done(function () {
+
+            });
+        });
+    </script> 
+</div>

@@ -11,6 +11,7 @@ namespace Hermes.Montoring.Mvc.Hubs
         {
             // Call the addNewMessageToPage method to update clients.
             Clients.All.addNewMessageToPage(name, message);
+
         }
     }
 }
