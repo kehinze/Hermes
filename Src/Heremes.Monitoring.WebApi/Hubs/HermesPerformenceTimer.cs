@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Hermes.Monitoring.Statistics;
 using Hermes.Monitoring.WebApi.Dto;
 using Hermes.Serialization.Json;
@@ -8,8 +9,7 @@ namespace Hermes.Monitoring.WebApi.Hubs
 {
     public class HermesPerformenceTimer
     {
-        private SqlTransportPerfomanceMonitor sqlTransportPerfomanceMonitor;
-        private Queue<HermesPerformenceDto>  performenceDtos = new Queue<HermesPerformenceDto>();
+        private static SqlTransportPerfomanceMonitor sqlTransportPerfomanceMonitor;
         private IHubContext hubContext;
 
         public HermesPerformenceTimer()
@@ -21,19 +21,15 @@ namespace Hermes.Monitoring.WebApi.Hubs
 
         void timer_Elapsed(object sender, PerformanceMetricEventArgs e)
         {
-            performenceDtos.Enqueue(new HermesPerformenceDto
+            var performence = new HermesPerformenceDto
             {
-                AverageTimeToDeliverMessagesPerSecond = e.PerformanceMetric.Count,
-                AverageTimeToProcessMessagesPerSecond = e.PerformanceMetric.AverageTimeToDelivery.Milliseconds,
-                MessagesPerSedond = e.PerformanceMetric.AverageTimeToProcess.Milliseconds
-            });
+                AverageTimeToDeliverMessages = e.PerformanceMetric.AverageTimeToDelivery.TotalSeconds,
+                AverageTimeToProcessMessages = e.PerformanceMetric.AverageTimeToProcess.TotalSeconds,
+                MessagesPerSecond = e.PerformanceMetric.Count / e.MonitorPeriod.TotalSeconds,
+                TotalTimeIntervalInSeconds = e.MonitorPeriod.TotalSeconds
+            };
 
-            if (performenceDtos.Count > 100)
-            {
-                performenceDtos.Dequeue();
-            }
-
-            hubContext.Clients.All.updateHermesPerformenceMonitor(performenceDtos.ToArray());
+            hubContext.Clients.All.updateHermesPerformenceMonitor(performence);
         }
     }
 }

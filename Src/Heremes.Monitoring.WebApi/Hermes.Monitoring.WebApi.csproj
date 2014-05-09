@@ -530,12 +530,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dto\HermesPerformenceDto.cs" />
-    <Compile Include="Hubs\BackgroundServerTimeTimer.cs" />
-    <Compile Include="Hubs\ClientPushHub.cs" />
     <Compile Include="Hubs\HermesPerformenceHub.cs" />
     <Compile Include="Hubs\HermesPerformenceTimer.cs" />
     <Compile Include="Hubs\MessageMonitor.cs" />
-    <Compile Include="Hubs\ServerTimeHub.cs" />
     <Compile Include="Hubs\TestHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

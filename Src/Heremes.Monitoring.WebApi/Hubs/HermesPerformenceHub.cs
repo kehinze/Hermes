@@ -21,9 +21,6 @@ namespace Hermes.Monitoring.WebApi.Hubs
             return base.OnConnected();
         }
 
-        public void SayHello()
-        {
-            this.Clients.All("Hello");
-        }
+        
     }
 }

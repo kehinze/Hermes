@@ -18,11 +18,9 @@ namespace Hermes.Monitoring.WebApi
     public class Startup
     {
         private HermesPerformenceTimer hermesPerformenceTimer;
-        private BackgroundServerTimeTimer backgroundServerTimeTimer;
         public void Configuration(IAppBuilder app)
         { 
             hermesPerformenceTimer = new HermesPerformenceTimer();
-            backgroundServerTimeTimer = new BackgroundServerTimeTimer();
             app.UseCors(CorsOptions.AllowAll);
 
             string contentPath = Path.Combine(Environment.CurrentDirectory, @"/Web");

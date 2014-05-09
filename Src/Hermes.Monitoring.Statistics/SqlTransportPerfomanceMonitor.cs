@@ -31,7 +31,7 @@ namespace Hermes.Monitoring.Statistics
         private long previousAudit;
         private long previousError;
         private readonly TimeSpan monitoringPeriod = TimeSpan.FromSeconds(10);
-
+        
         public event PerformanceMetricEventHandler OnPerformancePeriodCompleted;
 
         public SqlTransportPerfomanceMonitor(ISerializeObjects serializer)
