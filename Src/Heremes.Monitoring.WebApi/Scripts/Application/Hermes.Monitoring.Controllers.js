@@ -78,6 +78,11 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         
         hermesPerformenceHubProxy.on('updateEndpointPerformence', function (data) {
 
+
+            var process = $scope.EndpointAverageTimeToDeliverMessagesCollection;
+            var process23 = $scope.EndpointAverageTimeToProcessMessagesCollection;
+
+           
             $scope.UpdateEndpoints($scope.EndpointSeriesCollection, data, $scope.DataFields[0]);
             $scope.UpdateEndpoints($scope.EndpointAverageTimeToDeliverMessagesCollection, data, $scope.DataFields[1]);
             $scope.UpdateEndpoints($scope.EndpointAverageTimeToProcessMessagesCollection, data, $scope.DataFields[2]);
@@ -109,6 +114,7 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         $scope.UpdateEndpointsInResponse = function (seriesCollection, responseEndpoints, dataFieldName) {
             for (var i = 0; i < responseEndpoints.length; i++) {
                 var dataValue = $scope.GetDataField(dataFieldName, responseEndpoints[i]);
+                console.log("data " + dataFieldName + ":" + dataValue);
                 if ($scope.ExistInSeries(seriesCollection, responseEndpoints[i].Endpoint.Queue).exists) {
                    
                     $scope.AddDataToExistingEndpoint(seriesCollection, responseEndpoints[i].Endpoint.Queue, dataValue);
@@ -148,7 +154,7 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
                 return endpointData.AverageTimeToDeliver;
             }
             if ($scope.DataFields[2] == dataFieldName) {
-                return endpointData.AverageMessagesPerSecond;
+                return endpointData.AverageTimeToProcess;
             }
         };
         
