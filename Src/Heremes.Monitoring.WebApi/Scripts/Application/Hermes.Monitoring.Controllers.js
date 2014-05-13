@@ -78,11 +78,6 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         
         hermesPerformenceHubProxy.on('updateEndpointPerformence', function (data) {
 
-
-            var process = $scope.EndpointAverageTimeToDeliverMessagesCollection;
-            var process23 = $scope.EndpointAverageTimeToProcessMessagesCollection;
-
-           
             $scope.UpdateEndpoints($scope.EndpointSeriesCollection, data, $scope.DataFields[0]);
             $scope.UpdateEndpoints($scope.EndpointAverageTimeToDeliverMessagesCollection, data, $scope.DataFields[1]);
             $scope.UpdateEndpoints($scope.EndpointAverageTimeToProcessMessagesCollection, data, $scope.DataFields[2]);
@@ -211,19 +206,19 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
             'Time in Seconds',
             'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
             $scope.EndpointSeriesCollection);
+      
         
-        $scope.EndpointAverageTimeToProcessMessagesConfig = highChartHelper.CreateColumnChart('Average time to deliver messages',
-          'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
-          'Time in Milliseconds',
-          'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
-           $scope.EndpointAverageTimeToDeliverMessagesCollection);
-
-
         $scope.EndpointAverageTimeToProcessMessagesConfig = highChartHelper.CreateColumnChart('Average time to process messages',
            'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
            'Time in Milliseconds',
            'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
            $scope.EndpointAverageTimeToProcessMessagesCollection);
+
+        $scope.EndpointAverageTimeToDeliverMessagesConfig = highChartHelper.CreateColumnChart('Average time to deliver messages',
+           'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
+           'Time in Milliseconds',
+           'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
+           $scope.EndpointAverageTimeToDeliverMessagesCollection);
 
     }])
     .controller('HomeController', function () {
