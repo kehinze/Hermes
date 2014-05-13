@@ -3,8 +3,11 @@
 
 
     })
-    .factory('signalRHubProxy', ['$rootScope', 'signalRServer', function ($rootScope, signalRServer) {
-        function signalRHubProxyFactory(serverUrl, hubName, startOptions) {
+    .factory('signalRHubProxy', ['$rootScope', 'signalRServer',  function ($rootScope, signalRServer) {
+
+        var hubProxies = [];
+
+        var signalRHubProxyFactory = function (hubName, startOptions) {
             var connection = $.hubConnection(signalRServer);
             var proxy = connection.createHubProxy(hubName);
             connection.start(startOptions).done(function () { });
@@ -42,7 +45,11 @@
             };
         };
 
-        return signalRHubProxyFactory;
+        return {
+            CreateProxy: function(hubName, startOptions) {
+                return signalRHubProxyFactory(hubName, startOptions);
+            }
+        };
     }])
     .factory('highChartHelper', function() {
 
@@ -96,6 +103,12 @@
             },
             CreateLineChart: function (title, subtitle, yAxisDescription, xAxaisDescription, assignedSeries) {
                 return createChart('line', title, subtitle, yAxisDescription, xAxaisDescription, assignedSeries);
+            },
+            CreateBarChart: function(title, subtitle, yAxisDescription, xAxaisDescription, assignedSeries) {
+                return createChart('bar', title, subtitle, yAxisDescription, xAxaisDescription, assignedSeries);
+            },
+            CreateColumnChart: function (title, subtitle, yAxisDescription, xAxaisDescription, assignedSeries) {
+                return createChart('column', title, subtitle, yAxisDescription, xAxaisDescription, assignedSeries);
             }
         };
     });

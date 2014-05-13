@@ -3,10 +3,10 @@
 angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', 'highcharts-ng'])
     .controller('HermesPerformenceController', ['$scope', 'HermesPerformenceApiService', 'signalRHubProxy', 'highChartHelper',
         function ($scope, HermesPerformenceApiService, signalRHubProxy, highChartHelper) {
-
+            // 'http://localhost:61676', 
        
-        var hermesPerformenceHubProxy = signalRHubProxy(
-             'http://localhost:61676', 'HermesPerformenceHub',
+        var hermesPerformenceHubProxy = signalRHubProxy.CreateProxy(
+            'HermesPerformenceHub',
                  { logging: true });
         
         hermesPerformenceHubProxy.on('updateHermesPerformenceMonitor', function (data) {
@@ -33,30 +33,30 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
 
         $scope.AverageMessagesPerSecondSeries = [{
             name: 'Average Messages per second',
-            type: 'line',
+            type: 'column',
             data: [0],
         }];
 
         $scope.AverageTimeToDeliverMessagesSeries = {
             name: 'Average Time To Deliver Message',
-            type: 'line',
+            type: 'column',
             data: [0]
         };
         
         $scope.AverageTimeToProcessMessagesSeries = {
             name: 'Average Time To Process Message',
-            type: 'line',
+            type: 'column',
             data: [0]
         };
         
-        $scope.AverageMessagesPerSecondChartConfig = highChartHelper.CreateLineChart('Average Messages Per Second',
+        $scope.AverageMessagesPerSecondChartConfig = highChartHelper.CreateColumnChart('Average Messages Per Second',
             'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
              'Average Messages',
              'Time Interval in ' + $scope.TotalTimeIntervalInSeconds + ' s',
            $scope.AverageMessagesPerSecondSeries
         );
         
-        $scope.AverageTimeConfig = highChartHelper.CreateLineChart('Average',
+        $scope.AverageTimeConfig = highChartHelper.CreateColumnChart('Average',
              'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
              'Time in Milliseconds',
              'dummy',
@@ -68,12 +68,16 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         });
 
         
+        }])
+    .controller('EndpointPerformence', ['$scope', 'signalRHubProxy', 'highChartHelper', function ($scope, signalRHubProxy, highChartHelper) {
+
+
+
+
     }])
     .controller('HomeController', function () {
         
 
 
 
-    })
-    .controller('TestSignalRController', function() {
     });

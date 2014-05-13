@@ -32,4 +32,5 @@ namespace Hermes.Monitoring.WebApi.Hubs
             hubContext.Clients.All.updateHermesPerformenceMonitor(performence);
         }
     }
+
 }

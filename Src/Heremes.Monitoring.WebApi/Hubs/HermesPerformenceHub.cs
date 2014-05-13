@@ -20,7 +20,5 @@ namespace Hermes.Monitoring.WebApi.Hubs
         {
             return base.OnConnected();
         }
-
-        
     }
 }
