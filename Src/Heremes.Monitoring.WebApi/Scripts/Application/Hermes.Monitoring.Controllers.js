@@ -5,6 +5,7 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         function ($scope, HermesPerformenceApiService, signalRHubProxy, highChartHelper) {
             // 'http://localhost:61676', 
        
+
         var hermesPerformenceHubProxy = signalRHubProxy.CreateProxy(
             'HermesPerformenceHub',
                  { logging: true });
@@ -77,16 +78,12 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         
         hermesPerformenceHubProxy.on('updateEndpointPerformence', function (data) {
 
-            for(var i=0; i<data.length; i++)
-            {
-                if ($scope.ExistInSeries(data[i].Endpoint.Queue).exists) {
-                    $scope.AddDataToExistingEndpoint(data[i].Endpoint.Queue, data[i].AverageMessagesPerSecond);
-                } else {
-                    $scope.AddNewEndpoint(data[i].Endpoint.Queue, data[i].AverageMessagesPerSecond);
-                }
-            }
-            $scope.UpdateEndpointsThatAreNotInResponseFromServer();
+            $scope.UpdateEndpoints($scope.EndpointSeriesCollection, data, $scope.DataFields[0]);
+            $scope.UpdateEndpoints($scope.EndpointAverageTimeToDeliverMessagesCollection, data, $scope.DataFields[1]);
+            $scope.UpdateEndpoints($scope.EndpointAverageTimeToProcessMessagesCollection, data, $scope.DataFields[2]);
         });
+
+        $scope.DataFields = ['AverageMessagesPerSecond', 'AverageTimeToDeliverMessages', 'AverageTimeToProcessMessages'];
 
         $scope.MaximumDataUnits = 50;
         
@@ -98,55 +95,92 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
                 dataArray.data.push(data);
             }
         };
-
-        $scope.HighestSeriesDataLength = function() {
-            var highestCount = 0;
-            for (var i = 0; i < $scope.EndpointSeriesCollection.length; i++) {
-                var length = $scope.EndpointSeriesCollection[i].data.length;
-                if (highestCount > length) {
-                    highestCount = length;
+        
+        $scope.ExistsInResponse = function (queueName, responseEndpoints) {
+            for(var i=0; i<responseEndpoints.length; i++)
+            {
+                if (responseEndpoints[i].Endpoint.Queue == queueName) {
+                    return true;
                 }
             }
-            return highestCount;
+            return false;
         };
 
-        $scope.UpdateEndpointsThatAreNotInResponseFromServer = function() {
-            var highestSeriesDataLength = $scope.HighestSeriesDataLength();
-            for (var i = 0; i < $scope.EndpointSeriesCollection.length; i++) {
-                var length = $scope.EndpointSeriesCollection[i].data.length;
-                if (length < highestSeriesDataLength) {
-                    var howMuchLess = highestSeriesDataLength - length;
-                    for (var j = 0; j < howMuchLess; j++) {
-                        $scope.AddData($scope.EndpointSeriesCollection[i].data, 0);
-                    }
-                }
-            }
-        };
-
-        $scope.GetEndpointSeries = function (queueName) {
-            for (var i = 0; i < $scope.EndpointSeriesCollection.length; i++) {
-                if ($scope.EndpointSeriesCollection[i].name == queueName) {
-                    return $scope.EndpointSeriesCollection[i];
+        $scope.UpdateEndpointsInResponse = function (seriesCollection, responseEndpoints, dataFieldName) {
+            for (var i = 0; i < responseEndpoints.length; i++) {
+                var dataValue = $scope.GetDataField(dataFieldName, responseEndpoints[i]);
+                if ($scope.ExistInSeries(seriesCollection, responseEndpoints[i].Endpoint.Queue).exists) {
+                   
+                    $scope.AddDataToExistingEndpoint(seriesCollection, responseEndpoints[i].Endpoint.Queue, dataValue);
+                } else {
+                    $scope.AddNewEndpoint(seriesCollection, responseEndpoints[i].Endpoint.Queue, dataValue);
                 }
             }
         };
 
-        $scope.AddDataToExistingEndpoint = function (queueName, data) {
-            $scope.AddData($scope.GetEndpointSeries(queueName), data);
+        $scope.UpdateEndpointsNotInResponse = function(seriesCollection, responseEndpoints) {
+            for (var i = 0; i < seriesCollection.length; i++) {
+                var exists = $scope.ExistsInResponse(seriesCollection[i].name, responseEndpoints);
+
+                if (!exists) {
+                    $scope.AddDataToExistingEndpoint(seriesCollection, seriesCollection[i].name, 0);
+                } 
+            }
         };
 
-        $scope.AddNewEndpoint = function(queueName, data) {
+        $scope.GetSeries = function(dataFieldName) {
+            if ($scope.DataFields[0] == dataFieldName) {
+                return $scope.EndpointSeriesCollection;
+            }
+            if ($scope.DataFields[1] == dataFieldName) {
+                return $scope.EndpointAverageTimeToProcessMessagesCollection;
+            }
+            if ($scope.DataFields[2] == dataFieldName) {
+                return $scope.EndpointAverageTimeToProcessMessagesCollection;
+            }
+        };
+
+        $scope.GetDataField = function (dataFieldName, endpointData) {
+            if ($scope.DataFields[0] == dataFieldName) {
+                return endpointData.AverageMessagesPerSecond;
+            }
+            if ($scope.DataFields[1] == dataFieldName) {
+                return endpointData.AverageTimeToDeliver;
+            }
+            if ($scope.DataFields[2] == dataFieldName) {
+                return endpointData.AverageMessagesPerSecond;
+            }
+        };
+        
+        $scope.UpdateEndpoints = function(seriesCollection, responseEnpoints, dataFieldName) {
+            $scope.UpdateEndpointsInResponse(seriesCollection, responseEnpoints, dataFieldName);
+            $scope.UpdateEndpointsNotInResponse(seriesCollection, responseEnpoints);
+        };
+        
+        $scope.GetEndpointSeries = function (seriesCollection, queueName) {
+            for (var i = 0; i < seriesCollection.length; i++) {
+                if (seriesCollection[i].name == queueName) {
+                    return seriesCollection[i];
+                }
+            }
+        };
+
+        $scope.AddDataToExistingEndpoint = function (seriesCollection, queueName, data) {
+            $scope.AddData($scope.GetEndpointSeries(seriesCollection, queueName), data);
+        };
+
+        $scope.AddNewEndpoint = function (seriesCollection, queueName, data) {
             var series = {
                 name: queueName,
                 type: 'column',
                 data: [data]
             };
-            $scope.EndpointSeriesCollection.push(series);
+            seriesCollection.push(series);
         };
 
-        $scope.ExistInSeries = function(queueName) {
-            for (var i = 0; i < $scope.EndpointSeriesCollection.length; i++) {
-                if ($scope.EndpointSeriesCollection[i].name == queueName) {
+        $scope.ExistInSeries = function (seriesCollection, queueName) {
+            for (var i = 0; i < seriesCollection.length; i++) {
+                if (seriesCollection[i].name == queueName) {
                     return {
                         exists: true,
                         index: i
@@ -158,17 +192,32 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
                 index: i
             };
         };
-
+        $scope.EndpointAverageTimeToDeliverMessagesCollection = [];
+        
+        $scope.EndpointAverageTimeToProcessMessagesCollection = [];
+        
         $scope.EndpointSeriesCollection = [];
 
         $scope.TotalTimeIntervalInSeconds = 10;
 
         $scope.EndpointPerformenceConfig = highChartHelper.CreateColumnChart('Average Messages Per Second',
             'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
-            'Time in Milliseconds',
+            'Time in Seconds',
             'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
             $scope.EndpointSeriesCollection);
         
+        $scope.EndpointAverageTimeToProcessMessagesConfig = highChartHelper.CreateColumnChart('Average time to deliver messages',
+          'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
+          'Time in Milliseconds',
+          'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
+           $scope.EndpointAverageTimeToDeliverMessagesCollection);
+
+
+        $scope.EndpointAverageTimeToProcessMessagesConfig = highChartHelper.CreateColumnChart('Average time to process messages',
+           'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
+           'Time in Milliseconds',
+           'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
+           $scope.EndpointAverageTimeToProcessMessagesCollection);
 
     }])
     .controller('HomeController', function () {
