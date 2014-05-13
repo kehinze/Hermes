@@ -15,6 +15,9 @@ namespace ConsoleApplication1
         static void Main(string[] args)
         {
             LogFactory.BuildLogger = t => new ConsoleWindowLogger(t);
+         
+            
+            
             var counter = new SqlTransportPerfomanceMonitor(new JsonObjectSerializer());
             counter.OnPerformancePeriodCompleted += counter_OnPerformancePeriodCompleted;
 
