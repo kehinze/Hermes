@@ -88,7 +88,7 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         $scope.MaximumDataUnits = 50;
         
         $scope.AddData = function (dataArray, data) {
-            if (dataArray.length > $scope.MaximumDataUnits) {
+            if (dataArray.data.length > $scope.MaximumDataUnits) {
                 dataArray.data.splice(0, 1);
                 dataArray.data.push(data);
             } else {
