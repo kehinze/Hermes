@@ -59,7 +59,7 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         
         $scope.AverageTimeConfig = highChartHelper.CreateColumnChart('Average',
              'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
-             'Time in Milliseconds',
+             'Time in Seconds',
               'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
             [ $scope.AverageTimeToDeliverMessagesSeries, $scope.AverageTimeToProcessMessagesSeries]
         );
@@ -210,13 +210,13 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
         
         $scope.EndpointAverageTimeToProcessMessagesConfig = highChartHelper.CreateColumnChart('Average time to process messages',
            'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
-           'Time in Milliseconds',
+           'Time in Seconds',
            'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
            $scope.EndpointAverageTimeToProcessMessagesCollection);
 
         $scope.EndpointAverageTimeToDeliverMessagesConfig = highChartHelper.CreateColumnChart('Average time to deliver messages',
            'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
-           'Time in Milliseconds',
+           'Time in Seconds',
            'Time Interval - ' + $scope.TotalTimeIntervalInSeconds + ' s',
            $scope.EndpointAverageTimeToDeliverMessagesCollection);
 
