@@ -18,9 +18,12 @@ namespace Hermes.Monitoring.WebApi
     public class Startup
     {
         private HermesPerformenceTimer hermesPerformenceTimer;
+        private HermesSqlQueueDisplayTimer hermesSqlQueueDisplayTimer;
+
         public void Configuration(IAppBuilder app)
         { 
             hermesPerformenceTimer = new HermesPerformenceTimer();
+            hermesSqlQueueDisplayTimer = new HermesSqlQueueDisplayTimer();
             app.UseCors(CorsOptions.AllowAll);
 
             string contentPath = Path.Combine(Environment.CurrentDirectory, @"/Web");

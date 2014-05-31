@@ -4,9 +4,7 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
     .controller('HermesPerformenceController', ['$scope', 'HermesPerformenceApiService', 'signalRHubProxy', 'highChartHelper',
         function ($scope, HermesPerformenceApiService, signalRHubProxy, highChartHelper) {
             // 'http://localhost:61676', 
-       
-
-        var hermesPerformenceHubProxy = signalRHubProxy.CreateProxy(
+       var hermesPerformenceHubProxy = signalRHubProxy.CreateProxy(
             'HermesPerformenceHub',
                  { logging: true });
         
@@ -226,4 +224,36 @@ angular.module('Hermes.Monitoring.Controllers', ['Hermes.Monitoring.Services', '
 
 
 
-    });
+    })
+    .controller('QueueDisplayController', ['$scope', 'signalRHubProxy', function($scope, signalRHubProxy) {
+         
+        var hermesSqlQueueDisplayHub = signalRHubProxy.CreateProxy(
+        'HermesSqlQueueDisplayHub',
+             { logging: true });
+
+        hermesSqlQueueDisplayHub.on('updateTableSchema', function (data) {
+
+            $scope.MapTableSchema(data);
+
+        });
+
+        $scope.MapTableSchema = function(data) {
+
+            var currentQueueData = [];
+
+            for (var i = 0; i < data.TableSchemas.length; i++) {
+                currentQueueData.push({
+                    label: data.TableSchemas[i].Name,
+                    children: data.TableSchemas[i].TableNames
+                });
+            }
+
+            $scope.QueueData = currentQueueData;
+        };
+
+        $scope.QueueData = [{
+            label: 'Languages',
+            children: ['Jade', 'Less', 'Coffeescript']
+        }];
+
+    }]);
